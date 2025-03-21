@@ -1,3 +1,5 @@
+import {esc} from "./modal.js";
+
 export const initialCards = [
     {
       name: "Архыз",
@@ -25,19 +27,28 @@ export const initialCards = [
     }
 ];
 
-export function addCard(dataCard, deleteCard) {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+const cardTemplate = document.querySelector('#card-template').content;
+function getCardTemplate() {
+  return cardTemplate.querySelector('.card').cloneNode(true);
+ };
+
+
+export function addCard(dataCard, deleteCard, toggleLike, openImagePopup) {
   
-  cardElement.querySelector('.card__image').src = dataCard.link;
-  cardElement.querySelector('.card__image').alt = dataCard.name;
+  const cardElement = getCardTemplate();
+  const cardImage = cardElement.querySelector('.card__image');
+  cardImage.src = dataCard.link;
+  cardImage.alt = dataCard.name;
   cardElement.querySelector('.card__title').textContent = dataCard.name;
-  
   
   const deleteButton = cardElement.querySelector('.card__delete-button');
   deleteButton.addEventListener('click', function() {deleteCard(deleteButton)
   });
 
+  const likeButton = cardElement.querySelector('.card__like-button');
+  likeButton.addEventListener('click', toggleLike);
+
+  cardImage.addEventListener('click', function() {openImagePopup(dataCard)});
 
   return cardElement;
 };
@@ -45,5 +56,9 @@ export function addCard(dataCard, deleteCard) {
 export function deleteCard(deleteButton) {
   const card = deleteButton.closest('.places__item');
   card.remove();
+};
+
+export function toggleLike(evt) {
+  evt.target.classList.toggle("card__like-button_is-active");
 };
 
