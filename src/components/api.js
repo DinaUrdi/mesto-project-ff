@@ -1,138 +1,84 @@
+import { checkResponse } from "./utils";
+
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-35',
+  headers: {
+    authorization: 'aa96e32a-ada3-4c29-93c6-560570ea205d',
+    'Content-Type': 'application/json',
+  },
+}
+
 export const initialCards = () => {
-  return fetch("https://mesto.nomoreparties.co/v1/wff-cohort-35/cards", {
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-    },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  return fetch(`${config.baseUrl}/cards`, {
+    headers: config.headers,
+  }).then(checkResponse);
 };
 // Для работы с API создайте файл api.js. Все запросы присвойте переменным и экспортируйте их. В других модулях вы сможете импортировать эти функции и вызывать их. Вот небольшой пример того, как можно обустроить код в файле api.js:
 
 //загрузка информации о пользователе с сервера
 export function loadUserData() {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-35/users/me", {
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-    },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  return fetch(`${config.baseUrl}/users/me`, {
+    headers: config.headers,
+  }).then(checkResponse);
 }
 
 //обновление данных пользователя
 export function updateUserData({ name, about, avatar }) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-35/users/me", {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: name,
       about: about,
       avatar: avatar,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then(checkResponse);
 }
 
 //добавление новой карточки
 export function addNewCard({ name, link }) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-35/cards", {
+  return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: name,
       link: link,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then(checkResponse);
 }
 
 //удаление карточки
 export const deleteCardFetch = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-35/cards/${cardId}`, {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-      "Content-Type": "application/json",
-    },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+    headers: config.headers,
+  }).then(checkResponse);
 };
 
 //лайк карточки
 export const addLike = (cardId) => {
-  return fetch(
-    `https://nomoreparties.co/v1/wff-cohort-35/cards/likes/${cardId}`,
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`,
     {
       method: "PUT",
-      headers: {
-        authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-        "Content-Type": "application/json",
-      },
+      headers: config.headers,
     }
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  ).then(checkResponse);
 };
 
 export const removeLike = (cardId) => {
-  return fetch(
-    `https://nomoreparties.co/v1/wff-cohort-35/cards/likes/${cardId}`,
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`,
     {
       method: "DELETE",
-      headers: {
-        authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-        "Content-Type": "application/json",
-      },
+      headers: config.headers,
     }
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  ).then(checkResponse);
 };
 
 //обновление аватара
 export function updateUserAvatar(avatar) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-35/users/me/avatar", {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
-    headers: {
-      authorization: "aa96e32a-ada3-4c29-93c6-560570ea205d",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify(avatar),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then(checkResponse);
 }

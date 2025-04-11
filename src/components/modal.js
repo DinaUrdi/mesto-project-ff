@@ -1,5 +1,4 @@
 const esc = 27;
-import { hideInputError } from "./validation";
 export function closeByEsc(evt) {
   if (evt.keyCode === esc) {
     const openedPopup = document.querySelector(".popup_is-opened");
@@ -15,13 +14,6 @@ export function openPopup(popup) {
 }
 
 export function closePopup(popup) {
-  const form = popup.querySelector('.popup__form');
-  if (form) {
-    const inputs = form.querySelectorAll('.popup__input');
-    inputs.forEach((input) => {
-      hideInputError(form, input);
-    });
-  }
   popup.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", closeByEsc);
 }

@@ -15,7 +15,7 @@ import {
   closeByEsc,
   closeByCrossButtonClick,
 } from "./components/modal.js";
-import { enableValidation } from "./components/validation.js";
+import { enableValidation, resetValidation } from "./components/validation.js";
 //объявление констант
 const listCard = document.querySelector(".places__list");
 const popupEdit = document.querySelector(".popup_type_edit");
@@ -45,23 +45,22 @@ let currentUserId = null;
 buttonOpenFormEditProfile.addEventListener("click", function () {
   nameInput.value = name.textContent;
   jobInput.value = job.textContent;
+  resetValidation(popupEdit, config);
   openPopup(popupEdit);
 });
 
 buttonOpenFormAddCard.addEventListener("click", function () {
+  resetValidation(popupNew, config);
   openPopup(popupNew);
 });
 
 openFormEditAvatar.addEventListener("click", function () {
+  resetValidation(popupAvatar, config);
   openPopup(popupAvatar);
 });
 
 popupAll.forEach((popup) => {
   popup.addEventListener("click", closeByOverlay);
-});
-
-popupAll.forEach((popup) => {
-  popup.addEventListener("keydown", closeByEsc);
 });
 
 popupAll.forEach((popup) => {
@@ -94,8 +93,10 @@ function submitEditProfileForm(evt) {
       job.textContent = updatedUser.about;
       closePopup(popupEdit);
     })
+    .catch((err) => {
+      console.error("Ошибка при обновлении данных профиля:", err);
+    })
     .finally(() => {
-      submitButton.disabled = false;
       submitButton.textContent = "Сохранить";
     });
 }
@@ -114,6 +115,9 @@ function submitEditAvatarForm(evt) {
       console.log(updatedUser.avatar);
       closePopup(popupAvatar);
       formEditAvatar.reset();
+    })
+    .catch((err) => {
+      console.error("Ошибка при обновлении аватара:", err);
     })
     .finally(() => {
       submitButton.disabled = false;
@@ -147,24 +151,37 @@ function handleCardSubmit(evt) {
       formAddCard.reset();
       closePopup(popupNew);
     })
+    .catch((err) => {
+      console.error("Ошибка при добавлении карточки:", err);
+    })
     .finally(() => {
-      submitButton.disabled = false;
+      // submitButton.disabled = false;
       submitButton.textContent = "Сохранить";
     });
 }
 
-enableValidation({
+const config = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
   inactiveButtonClass: "popup__button_disabled",
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
-});
+};
+enableValidation(config);
 
 //загрузка карточек с сервера
-initialCards()
-  .then((cardsData) => {
+Promise.all([loadUserData(), initialCards()])
+  .then(([userData, cardsData]) => {
+    // Обрабатываем данные пользователя
+    currentUserId = userData._id;
+    name.textContent = userData.name;
+    job.textContent = userData.about;
+    if (userData.avatar) {
+      document.querySelector(
+        ".profile__image"
+      ).style.backgroundImage = `url('${userData.avatar}')`;
+    }
     cardsData.forEach((item) => {
       const newCard = addCard(
         item,
@@ -178,20 +195,5 @@ initialCards()
     });
   })
   .catch((err) => {
-    console.log(err); // выводим ошибку в консоль
-  });
-
-loadUserData()
-  .then((result) => {
-    currentUserId = result._id;
-    name.textContent = result.name;
-    job.textContent = result.about;
-    if (result.avatar) {
-      document.querySelector(
-        ".profile__image"
-      ).style.backgroundImage = `url('${result.avatar}')`;
-    }
-  })
-  .catch((err) => {
-    console.log(err); // выводим ошибку в консоль
+    console.log("Ошибка при загрузке данных:", err);
   });
